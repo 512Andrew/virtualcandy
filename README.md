@@ -1,0 +1,2 @@
+# virtualcandy
+VirtualCandy site featuring interactive Candyverse, hybrid content/shop, and affiliate integration
