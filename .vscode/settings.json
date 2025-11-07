@@ -17,5 +17,8 @@
     "snackable",
     "Stix",
     "sugarfina"
-  ]
+  ],
+  "[markdown]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
 }
