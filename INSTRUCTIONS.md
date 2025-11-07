@@ -21,7 +21,7 @@ pnpm dev
 
 ## 📁 Project Structure
 
-```
+```text
 /workspaces/virtualcandy/
 ├── virtual-candy/              # Main Next.js application
 │   ├── src/
