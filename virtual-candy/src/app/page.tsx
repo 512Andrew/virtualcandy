@@ -101,7 +101,7 @@ export default function VirtualCandyHome() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-pink-50 via-white to-amber-50 text-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-amber-50 text-slate-800">
       {/* Top Bar */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/75 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -221,7 +221,7 @@ export default function VirtualCandyHome() {
 
       {/* Quiz CTA */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-3xl bg-linear-to-r from-pink-600 to-rose-500 text-white p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
+        <div className="rounded-3xl bg-gradient-to-r from-pink-600 to-rose-500 text-white p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
           <div>
             <h3 className="text-2xl font-extrabold">Find your Flavor Personality</h3>
             <p className="text-white/90 text-sm mt-1">Take our 45‑second quiz. Get a personalized candy list and discount codes.</p>
@@ -300,7 +300,7 @@ export default function VirtualCandyHome() {
             {modal.products.map((p) => (
               <div key={p.id} className="rounded-2xl border p-4 bg-white">
                 <div className="flex items-center gap-3">
-                  <div className="size-12 rounded-xl bg-linear-to-br from-amber-50 to-pink-50 flex items-center justify-center text-xl">{p.image}</div>
+                  <div className="size-12 rounded-xl bg-gradient-to-br from-amber-50 to-pink-50 flex items-center justify-center text-xl">{p.image}</div>
                   <div>
                     <div className="text-sm font-semibold">{p.name}</div>
                     <div className="text-[12px] text-slate-500">{p.vendor} • {p.price}</div>
@@ -364,7 +364,7 @@ function Logo() {
 function ArticleCard({ tag, title, blurb }: { tag: string; title: string; blurb: string }) {
   return (
     <article className="group rounded-3xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition">
-      <div className="aspect-video bg-linear-to-br from-amber-100 via-pink-100 to-white flex items-center justify-center text-5xl">🍬</div>
+      <div className="aspect-video bg-gradient-to-br from-amber-100 via-pink-100 to-white flex items-center justify-center text-5xl">🍬</div>
       <div className="p-5">
         <div className="text-xs font-semibold text-amber-700">{tag}</div>
         <h3 className="mt-1 text-lg font-bold group-hover:text-pink-700 transition">{title}</h3>
@@ -388,7 +388,7 @@ function ProductCard({ vendor, name, price, href, note }: {
 }) {
   return (
     <div className="group rounded-3xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition">
-      <div className="aspect-square bg-linear-to-br from-white via-rose-50 to-amber-50 flex items-center justify-center text-6xl">🍭</div>
+      <div className="aspect-square bg-gradient-to-br from-white via-rose-50 to-amber-50 flex items-center justify-center text-6xl">🍭</div>
       <div className="p-5">
         <div className="text-xs font-semibold text-slate-500">{vendor}</div>
         <h3 className="mt-1 text-base font-bold">{name}</h3>
@@ -429,7 +429,7 @@ function CandyHeroCard() {
 function MiniItem({ name, vendor }: { name: string; vendor: string }) {
   return (
     <div className="rounded-2xl border bg-white p-3 text-xs">
-      <div className="aspect-square rounded-xl bg-linear-to-br from-pink-100 to-amber-100 flex items-center justify-center">✨</div>
+      <div className="aspect-square rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center">✨</div>
       <div className="mt-2 font-semibold">{name}</div>
       <div className="text-slate-500">{vendor}</div>
     </div>
@@ -454,7 +454,7 @@ function CandyverseScene({ onOpen }: { onOpen: (planetId: string, constellationI
 
   return (
     <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+      <div className="aspect-video rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
         {/* Mock starfield */}
         <div className="absolute inset-0">
           {stars.map((star) => (

@@ -263,7 +263,7 @@ export default function VirtualCandyPrototype() {
   }, [enableDev]);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-pink-50 via-white to-amber-50 text-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-amber-50 text-slate-800">
       {/* Top Bar */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/75 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
