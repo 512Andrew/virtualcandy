@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VirtualCandy
 
-## Getting Started
+VirtualCandy.com is a hybrid content + affiliate shop with an interactive "Candyverse" modal that maps flavors like planets → constellations → products. The site is static-first and progressively enhanced; affiliate links open on partner sites.
 
-First, run the development server:
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-bun dev
+
+# Build for production
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: Next.js (App Router) + TypeScript + Tailwind CSS 4.x
+- **Style**: Clean, accessible, minimal motion; modern cards, rounded-2xl, subtle shadows
+- **Node**: 18+
+- **Package Manager**: pnpm
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key Features
 
-## Learn More
+### 🌟 Interactive Candyverse
+- Planet-based navigation for candy categories (Chocolate, Gummies, Retro, Sour)
+- Constellation drill-down for product subcategories
+- Hash-based deep linking: `#candyverse?planet=gummies&view=all`
 
-To learn more about Next.js, take a look at the following resources:
+### 🔧 Development Tools
+- **Dev Panel**: Add `?dev=1` to enable development tests and data integrity checks
+- **Keyboard Shortcuts**: Add `?keys=1` to enable hotkeys (G=Gummies, C=Chocolate, R=Retro, S=Sour)
+- **Link Sharing**: Copy links preserve query parameters
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### ♿ Accessibility
+- Keyboard navigation support
+- ARIA labels on interactive elements
+- Focus management for modals
+- Never hijacks keys when user is typing in inputs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── page.tsx              # Main homepage
+│   ├── layout.tsx            # Root layout
+│   └── globals.css           # Global styles
+├── data/
+│   └── candyverse.ts         # Single source of truth for product data
+├── lib/
+│   ├── helpers.ts            # Pure helper functions
+│   ├── dev-tests.ts          # Development testing utilities
+│   └── routing.ts            # Hash-based routing utilities
+└── types/
+    └── index.ts              # TypeScript type definitions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Data Model
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Core Types
+- **Product**: `{ id, name, vendor, price, url, image, note? }`
+- **Constellation**: Collection of products within a planet
+- **Planet**: Main category with multiple constellations
+
+### Helper Functions (Pure)
+- `getFeaturedProducts()` - Returns ≤ 8 featured products
+- `aggregatePlanetProducts(planetId)` - Flattened products from all constellations
+- `parseCandyverseHash(hash)` - Parse deep-link URLs
+
+## URL Conventions
+
+### Deep Links (Hash-based)
+- `#candyverse` - Open Candyverse modal
+- `#candyverse?planet=gummies` - Navigate to Gummies planet
+- `#candyverse?planet=chocolate&constellation=dark` - Navigate to specific constellation
+- `#candyverse?planet=gummies&view=all` - View all products in planet
+
+### Query Parameters
+- `?dev=1` - Enable development testing panel
+- `?keys=1` - Enable keyboard shortcuts
+- These are preserved in "Copy Link" functionality
+
+## Development Guidelines
+
+### Data Integrity
+- Single source of truth: `CANDYVERSE_DATA` in `/data/candyverse.ts`
+- Never duplicate helper functions or constants
+- All helpers must be pure (non-mutating)
+- Run dev tests with `?dev=1` to catch issues
+
+### Component Patterns
+- Keep components small and focused
+- Use semantic HTML and proper ARIA labels
+- Prefer React state over global state
+- Lazy-load heavy assets
+
+### Testing
+- Dev tests run in-browser (no test runner required)
+- Tests validate: no duplicate IDs, data integrity, helper purity
+- Add new DevTest items instead of modifying existing ones
+
+## Affiliate Policy
+
+- No secrets in code
+- Affiliate tags via environment variables
+- Clear disclosure in UI copy
+- All affiliate links open on partner sites
+
+## Deployment
+
+The site is static-first:
+- Most pages can be pre-rendered
+- Progressive enhancement for interactive features
+- Optimized for performance and SEO
+
+---
+
+Built with ❤️ for candy lovers and tech geeks alike.
