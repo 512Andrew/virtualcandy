@@ -46,7 +46,7 @@ pnpm build
 ## Project Structure
 
 ```text
-virtual-candy/
+src/
 ├── app/
 │   ├── page.tsx              # Main homepage
 │   ├── layout.tsx            # Root layout
