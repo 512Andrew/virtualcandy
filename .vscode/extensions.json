@@ -1,5 +1,3 @@
 {
-    "recommendations": [
-        "oleg-shilo.cs-script"
-    ]
+  "recommendations": ["oleg-shilo.cs-script", "ms-dotnettools.csharp"]
 }
