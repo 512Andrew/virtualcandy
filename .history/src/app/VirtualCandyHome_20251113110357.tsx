@@ -188,25 +188,23 @@ export default function VirtualCandyHome() {
       <section id="candyverse" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <SectionHeader title="Step Into the Candyverse" subtitle="Explore flavors as planets. Click a planet → see products → jump to shop." />
         <div className="grid lg:grid-cols-2 gap-8 items-center">
-          <Suspense fallback={<CandyverseSceneFallback />}>
-            <CandyverseScene3D onOpen={handlePlanetClick} />
-          </Suspense>
+          <CandyverseScene onOpen={handlePlanetClick} />
           <div className="space-y-4">
             <h3 className="text-xl font-bold">How it works</h3>
             <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
               <li>Pick a planet (Chocolate, Gummies, Retro, Sour).</li>
-              <li>Drag to rotate the view and scroll to zoom in/out.</li>
-              <li>Click a planet to discover its constellations and products.</li>
+              <li>Zoom in to discover constellations (e.g., &ldquo;Freeze-Dried&rdquo;).</li>
+              <li>Click a treat to open a product card with affiliate link.</li>
             </ol>
-            <div className="p-4 rounded-2xl bg-green-50 border border-green-200 text-sm">
-              <strong>✨ Three.js Powered:</strong> This interactive 3D scene uses React Three Fiber for smooth planet exploration.
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-sm">
+              <strong>Dev note:</strong> This mock uses static data. Swap for a Three.js scene later and feed with this JSON.
             </div>
             <div className="flex flex-wrap gap-3">
               <button
                 className="rounded-xl px-4 py-2 bg-slate-900 text-white text-sm font-semibold"
                 onClick={() => handlePlanetClick("gummies", "freeze-dried")}
               >
-                Explore Gummies
+                Open Prototype
               </button>
               <button
                 className="rounded-xl px-4 py-2 bg-white border text-sm font-semibold"
@@ -328,17 +326,6 @@ export default function VirtualCandyHome() {
 // =========================
 // Presentational Components
 // =========================
-
-function CandyverseSceneFallback() {
-  return (
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center">
-        <div className="text-white/80 text-sm">Loading Candyverse...</div>
-      </div>
-    </div>
-  );
-}
-
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string; }) {
   return (
     <div className="mb-6 flex items-end justify-between">
@@ -445,6 +432,74 @@ function MiniItem({ name, vendor }: { name: string; vendor: string; }) {
       <div className="mt-2 font-semibold">{name}</div>
       <div className="text-slate-500">{vendor}</div>
     </div>
+  );
+}
+// Generate stable mock stars for the Candyverse scene with seeded positions
+const generateMockStars = () => {
+  return Array.from({ length: 80 }).map((_, i) => {
+    const seed = i * 9301 + 49297;
+    const rng = (n: number) => ((seed + n * 233280) % 233280) / 233280;
+    return {
+      id: i,
+      width: rng(1) * 2 + 1,
+      height: rng(2) * 2 + 1,
+      top: `${rng(3) * 100}%`,
+      left: `${rng(4) * 100}%`,
+      opacity: rng(5)
+    };
+  });
+};
+
+const MOCK_STARS = generateMockStars();
+
+function CandyverseScene({ onOpen }: { onOpen: (planetId: string, constellationId: string) => void; }) {
+  // Use pre-generated stable star positions
+  const stars = MOCK_STARS;
+
+  return (
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+        {/* Mock starfield */}
+        <div className="absolute inset-0">
+          {stars.map((star) => (
+            <span
+              key={star.id}
+              className="absolute rounded-full bg-white/80"
+              style={{
+                width: star.width,
+                height: star.height,
+                top: star.top,
+                left: star.left,
+                opacity: star.opacity
+              }} />
+          ))}
+        </div>
+        {/* Planets from data */}
+        {CANDYVERSE_DATA.planets.map((p) => (
+          <Planet
+            key={p.id}
+            name={p.name}
+            x={p.x}
+            y={p.y}
+            color={p.color}
+            onClick={() => onOpen(p.id, p.constellations[0].id)} />
+        ))}
+        <div className="absolute bottom-3 left-3 text-xs text-white/80">Prototype: Click a planet → modal with products</div>
+      </div>
+    </div>
+  );
+}
+function Planet({ name, x, y, color, onClick }: { name: string; x: string; y: string; color: string; onClick: () => void; }) {
+  return (
+    <button
+      className="absolute -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full"
+      style={{ left: x, top: y }}
+      onClick={onClick}
+      aria-label={`Explore ${name} planet`}
+    >
+      <div className="size-16 rounded-full shadow-[0_0_0_4px_rgba(255,255,255,0.1)]" style={{ background: color }} />
+      <div className="mt-1 text-[11px] text-white/90 text-center">{name}</div>
+    </button>
   );
 }
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void; }) {

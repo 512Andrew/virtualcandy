@@ -328,17 +328,6 @@ export default function VirtualCandyHome() {
 // =========================
 // Presentational Components
 // =========================
-
-function CandyverseSceneFallback() {
-  return (
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center">
-        <div className="text-white/80 text-sm">Loading Candyverse...</div>
-      </div>
-    </div>
-  );
-}
-
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string; }) {
   return (
     <div className="mb-6 flex items-end justify-between">
@@ -445,6 +434,74 @@ function MiniItem({ name, vendor }: { name: string; vendor: string; }) {
       <div className="mt-2 font-semibold">{name}</div>
       <div className="text-slate-500">{vendor}</div>
     </div>
+  );
+}
+// Generate stable mock stars for the Candyverse scene with seeded positions
+const generateMockStars = () => {
+  return Array.from({ length: 80 }).map((_, i) => {
+    const seed = i * 9301 + 49297;
+    const rng = (n: number) => ((seed + n * 233280) % 233280) / 233280;
+    return {
+      id: i,
+      width: rng(1) * 2 + 1,
+      height: rng(2) * 2 + 1,
+      top: `${rng(3) * 100}%`,
+      left: `${rng(4) * 100}%`,
+      opacity: rng(5)
+    };
+  });
+};
+
+const MOCK_STARS = generateMockStars();
+
+function CandyverseScene({ onOpen }: { onOpen: (planetId: string, constellationId: string) => void; }) {
+  // Use pre-generated stable star positions
+  const stars = MOCK_STARS;
+
+  return (
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+        {/* Mock starfield */}
+        <div className="absolute inset-0">
+          {stars.map((star) => (
+            <span
+              key={star.id}
+              className="absolute rounded-full bg-white/80"
+              style={{
+                width: star.width,
+                height: star.height,
+                top: star.top,
+                left: star.left,
+                opacity: star.opacity
+              }} />
+          ))}
+        </div>
+        {/* Planets from data */}
+        {CANDYVERSE_DATA.planets.map((p) => (
+          <Planet
+            key={p.id}
+            name={p.name}
+            x={p.x}
+            y={p.y}
+            color={p.color}
+            onClick={() => onOpen(p.id, p.constellations[0].id)} />
+        ))}
+        <div className="absolute bottom-3 left-3 text-xs text-white/80">Prototype: Click a planet → modal with products</div>
+      </div>
+    </div>
+  );
+}
+function Planet({ name, x, y, color, onClick }: { name: string; x: string; y: string; color: string; onClick: () => void; }) {
+  return (
+    <button
+      className="absolute -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full"
+      style={{ left: x, top: y }}
+      onClick={onClick}
+      aria-label={`Explore ${name} planet`}
+    >
+      <div className="size-16 rounded-full shadow-[0_0_0_4px_rgba(255,255,255,0.1)]" style={{ background: color }} />
+      <div className="mt-1 text-[11px] text-white/90 text-center">{name}</div>
+    </button>
   );
 }
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void; }) {
