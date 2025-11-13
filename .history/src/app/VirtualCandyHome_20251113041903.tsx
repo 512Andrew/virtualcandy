@@ -1,269 +1,107 @@
-import { useEffect, useMemo, useState } from "react";
-
-// v0.2.2 — Fix duplicate function bug + add more dev tests
-// - Removed stray duplicate declarations at the bottom (getFeaturedProducts, Product, CANDYVERSE_DATA, import)
-// - Keep a SINGLE data source + SINGLE helper function
-// - Added extra dev tests: helper existence, stable output shape, non‑mutating behavior
-//   Toggle tests with `?dev=1`
-
-// =========================
-// Data Model (single source)
-// =========================
-const CANDYVERSE_DATA = {
-  planets: [
-    {
-      id: "chocolate",
-      name: "Chocolate",
-      color: "#7c3aed",
-      x: "15%",
-      y: "35%",
-      constellations: [
-        {
-          id: "dark",
-          name: "Dark Side",
-          products: [
-            {
-              id: "sugarfina-champagne-bears",
-              name: "Champagne Bears® (Dark Companion Pair)",
-              vendor: "Sugarfina",
-              price: "from $20",
-              url: "https://aff.example/sugarfina/champagne-bears",
-              image: "🍾",
-              note: "Affiliate link",
-            },
-            {
-              id: "amazon-cocoa-85",
-              name: "85% Cocoa Bars Pack",
-              vendor: "Amazon",
-              price: "varies",
-              url: "https://amzn.to/your-tag",
-              image: "🍫",
-              note: "Affiliate link",
-            },
-          ],
-        },
-        {
-          id: "filled",
-          name: "Filled & Truffles",
-          products: [
-            {
-              id: "nutscom-choco-almonds",
-              name: "Chocolate Almonds",
-              vendor: "Nuts.com",
-              price: "from $12",
-              url: "https://aff.example/nuts/choco-almonds",
-              image: "🥜",
-              note: "Affiliate link",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "gummies",
-      name: "Gummies",
-      color: "#22c55e",
-      x: "65%",
-      y: "25%",
-      constellations: [
-        {
-          id: "freeze-dried",
-          name: "Freeze‑Dried",
-          products: [
-            {
-              id: "candywarehouse-freeze-rainbow",
-              name: "Freeze‑Dried Rainbow Bites",
-              vendor: "CandyWarehouse",
-              price: "from $12",
-              url: "https://aff.example/candywarehouse/freeze-dried-rainbow",
-              image: "🌈",
-              note: "Affiliate link",
-            },
-            {
-              id: "amazon-astronaut-taffy",
-              name: "Astronaut Taffy",
-              vendor: "Amazon",
-              price: "varies",
-              url: "https://amzn.to/your-tag",
-              image: "🧑‍🚀",
-              note: "Affiliate link",
-            },
-          ],
-        },
-        {
-          id: "sour-gummies",
-          name: "Sour Gummies",
-          products: [
-            {
-              id: "oldtimecandy-warheads-gummies",
-              name: "Warheads Extreme Gummies",
-              vendor: "OldTimeCandy",
-              price: "from $9",
-              url: "https://aff.example/oldtimecandy/warheads-gummies",
-              image: "😖",
-              note: "Affiliate link",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "retro",
-      name: "Retro",
-      color: "#f59e0b",
-      x: "40%",
-      y: "70%",
-      constellations: [
-        {
-          id: "90s",
-          name: "The 90s",
-          products: [
-            {
-              id: "oldtimecandy-2000s-box",
-              name: "2000s Throwback Box",
-              vendor: "OldTimeCandy",
-              price: "from $39",
-              url: "https://aff.example/oldtimecandy/2000s-box",
-              image: "🕹️",
-              note: "Affiliate link",
-            },
-            {
-              id: "etsy-nerds-rope-craft",
-              name: "Handmade Nerds Rope (Indie)",
-              vendor: "Etsy",
-              price: "varies",
-              url: "https://aff.example/etsy/nerds-rope",
-              image: "🧵",
-              note: "Affiliate link",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "sour",
-      name: "Sour",
-      color: "#ef4444",
-      x: "78%",
-      y: "62%",
-      constellations: [
-        {
-          id: "face-warp",
-          name: "Face‑Warp Scale",
-          products: [
-            {
-              id: "amazon-warheads-classic",
-              name: "Warheads Variety Pack",
-              vendor: "Amazon",
-              price: "from $14",
-              url: "https://amzn.to/your-tag",
-              image: "⚡",
-              note: "Affiliate link",
-            },
-          ],
-        },
-      ],
-    },
-  ],
-} as const;
-
-// =========================
-// Types
-// =========================
-export type Product = {
-  id: string;
-  name: string;
-  vendor: string;
-  price: string;
-  url: string;
-  image: string; // Emoji placeholder for now
-  note?: string;
-};
-
-// =========================
-// Helpers (single definition)
-// =========================
-function getFeaturedFrom(data: typeof CANDYVERSE_DATA): Product[] {
-  const picks: Product[] = [];
-  for (const p of data.planets) {
-    for (const c of p.constellations) {
-      for (const item of c.products) {
-        picks.push(item as Product);
-      }
-    }
-  }
-  return picks.slice(0, 8);
-}
-
-function getFeaturedProducts(): Product[] {
-  return getFeaturedFrom(CANDYVERSE_DATA);
-}
-
-// Dev tests — minimal assertions in-browser (no test runner required)
-function runDevTests() {
-  const log = (ok: boolean, name: string, detail = "") => {
-    const prefix = ok ? "✅" : "❌";
-    console.log(`${prefix} ${name}${detail ? ` — ${detail}` : ""}`);
-  };
-
-  try {
-    // Test 1: No duplicate planet IDs
-    const planetIds = CANDYVERSE_DATA.planets.map((p) => p.id);
-    const setIds = new Set(planetIds);
-    log(setIds.size === planetIds.length, "No duplicate planet IDs");
-
-    // Test 2: Each constellation has products array
-    const allConstellations = CANDYVERSE_DATA.planets.flatMap((p) => p.constellations);
-    log(allConstellations.every((c) => Array.isArray(c.products)), "Constellations expose products arrays");
-
-    // Test 3: Each product has minimally-required fields
-    const products = allConstellations.flatMap((c) => c.products);
-    const requiredOk = products.every((pr: any) => pr && pr.id && pr.name && pr.url);
-    log(requiredOk, "Products contain id/name/url");
-
-    // Test 4: getFeaturedProducts returns <= 8
-    const featured = getFeaturedProducts();
-    log(featured.length <= 8, "getFeaturedProducts limits to 8", `(${featured.length})`);
-
-    // Test 5: Clicking prototype button would open modal with products
-    log(Array.isArray(CANDYVERSE_DATA.planets[1].constellations[0].products), "Prototype button data path is valid");
-
-    // NEW Test 6: Helper exists and is a function
-    log(typeof getFeaturedProducts === "function", "getFeaturedProducts is defined once");
-
-    // NEW Test 7: Helper doesn't mutate data
-    const before = JSON.stringify(CANDYVERSE_DATA);
-    void getFeaturedProducts();
-    const after = JSON.stringify(CANDYVERSE_DATA);
-    log(before === after, "getFeaturedProducts is pure (non‑mutating)");
-
-    // NEW Test 8: getFeaturedFrom can handle empty structure
-    const emptyMock = { planets: [] } as const;
-    const res = getFeaturedFrom(emptyMock as any);
-    log(Array.isArray(res) && res.length === 0, "getFeaturedFrom([]) → []");
-  } catch (e: any) {
-    console.error("❌ Dev tests crashed:", e?.message || e);
-  }
-}
+"use client";
+import { CANDYVERSE_DATA } from "@/data/candyverse";
+import { getFeaturedProducts } from "@/lib/helpers";
+import { useCandyverseRouter, useQueryParams } from "@/lib/routing";
+import { Product } from "@/types";
+import { useState, useEffect, useMemo } from "react";
 
 // =========================
 // Component
 // =========================
-export default function VirtualCandyPrototype() {
-  const [modal, setModal] = useState<null | { planetId: string; planetName: string; constellationId: string; constellationName: string; products: Product[] }>(null);
 
-  // Run tiny dev tests when `?dev=1`
-  const enableDev = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return new URLSearchParams(window.location.search).get("dev") === "1";
-  }, []);
+export default function VirtualCandyHome() {
+  const [modal, setModal] = useState<null | {
+    planetId: string;
+    planetName: string;
+    constellationId: string;
+    constellationName: string;
+    products: Product[];
+  }>(null);
+
+  const router = useCandyverseRouter();
+  const { isDevMode, isKeysMode } = useQueryParams();
 
   useEffect(() => {
-    if (enableDev) runDevTests();
-  }, [enableDev]);
+    if (isDevMode()) {
+      // Import and run dev tests
+      import("@/lib/dev-tests").then((module) => {
+        module.runDevTests();
+      });
+    }
+  }, [isDevMode]);
+
+  // Keyboard shortcuts (only when ?keys=1)
+  useEffect(() => {
+    if (!isKeysMode()) return;
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      // Don't hijack keys when user is typing
+      if (e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement)?.contentEditable === "true") {
+        return;
+      }
+
+      // Don't hijack when modifier keys are held
+      if (e.altKey || e.metaKey || e.ctrlKey) {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case "g":
+          // Navigate to Gummies planet
+          router.navigateToPlanet("gummies", "all");
+          break;
+        case "c":
+          // Navigate to Chocolate planet
+          router.navigateToPlanet("chocolate");
+          break;
+        case "r":
+          // Navigate to Retro planet
+          router.navigateToPlanet("retro");
+          break;
+        case "s":
+          // Navigate to Sour planet
+          router.navigateToPlanet("sour");
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, [isKeysMode, router]);
+
+  // Handle modal based on route
+  useEffect(() => {
+    if (router.route.planet && router.route.constellation) {
+      const planet = CANDYVERSE_DATA.planets.find(p => p.id === router.route.planet);
+      const constellation = planet?.constellations.find(c => c.id === router.route.constellation);
+
+      if (planet && constellation) {
+        setModal({
+          planetId: planet.id,
+          planetName: planet.name,
+          constellationId: constellation.id,
+          constellationName: constellation.name,
+          products: constellation.products as Product[]
+        });
+      }
+    } else {
+      setModal(null);
+    }
+  }, [router.route]);
+
+  const handleModalClose = () => {
+    setModal(null);
+    router.closeCandyverse();
+  };
+
+  const handlePlanetClick = (planetId: string, constellationId: string) => {
+    router.navigateToConstellation(planetId, constellationId);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-amber-50 text-slate-800">
+    <div className="min-h-screen bg-linear-to-b from-pink-50 via-white to-amber-50 text-slate-800">
       {/* Top Bar */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/75 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -304,6 +142,11 @@ export default function VirtualCandyPrototype() {
               <Badge>Sugar-free</Badge>
               <Badge>Gift boxes</Badge>
             </div>
+            {isKeysMode() && (
+              <div className="mt-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-sm">
+                <strong>Keyboard shortcuts enabled:</strong> G=Gummies, C=Chocolate, R=Retro, S=Sour
+              </div>
+            )}
           </div>
           <div className="relative">
             <CandyHeroCard />
@@ -315,7 +158,7 @@ export default function VirtualCandyPrototype() {
       <section id="articles" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <SectionHeader title="Fresh from the Lab" subtitle="Candy reviews, nostalgia, and candy science." />
         <div className="grid md:grid-cols-3 gap-6">
-          <ArticleCard tag="Candy Science" title="We Freeze-Dried Skittles So You Don’t Have To" blurb="The texture, the crunch, the science—plus best buys." />
+          <ArticleCard tag="Candy Science" title="We Freeze-Dried Skittles So You Don't Have To" blurb="The texture, the crunch, the science—plus best buys." />
           <ArticleCard tag="Nostalgia" title="90s Candy That Defined LAN Parties" blurb="From Pixy Stix to Warheads: the snacks that fueled dial-up dreams." />
           <ArticleCard tag="Guides" title="Top 7 Sour Candies Ranked by Face Warp" blurb="Measured on our extremely scientific Pucker Scale™." />
         </div>
@@ -338,20 +181,39 @@ export default function VirtualCandyPrototype() {
       <section id="candyverse" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <SectionHeader title="Step Into the Candyverse" subtitle="Explore flavors as planets. Click a planet → see products → jump to shop." />
         <div className="grid lg:grid-cols-2 gap-8 items-center">
-          <CandyverseScene onOpen={(payload) => setModal(payload)} />
+          <CandyverseScene onOpen={handlePlanetClick} />
           <div className="space-y-4">
             <h3 className="text-xl font-bold">How it works</h3>
             <ol className="list-decimal list-inside text-sm text-slate-600 space-y-2">
               <li>Pick a planet (Chocolate, Gummies, Retro, Sour).</li>
-              <li>Zoom in to discover constellations (e.g., “Freeze-Dried”).</li>
+              <li>Zoom in to discover constellations (e.g., &ldquo;Freeze-Dried&rdquo;).</li>
               <li>Click a treat to open a product card with affiliate link.</li>
             </ol>
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-sm">
               <strong>Dev note:</strong> This mock uses static data. Swap for a Three.js scene later and feed with this JSON.
             </div>
             <div className="flex flex-wrap gap-3">
-              <button className="rounded-xl px-4 py-2 bg-slate-900 text-white text-sm font-semibold" onClick={() => setModal({ planetId: "gummies", planetName: "Gummies", constellationId: "freeze-dried", constellationName: "Freeze‑Dried", products: CANDYVERSE_DATA.planets[1].constellations[0].products as Product[] })}>Open Prototype</button>
-              <button className="rounded-xl px-4 py-2 bg-white border text-sm font-semibold" onClick={() => alert("Data model lives in CANDYVERSE_DATA → planets[]")}>View Data Model</button>
+              <button
+                className="rounded-xl px-4 py-2 bg-slate-900 text-white text-sm font-semibold"
+                onClick={() => handlePlanetClick("gummies", "freeze-dried")}
+              >
+                Open Prototype
+              </button>
+              <button
+                className="rounded-xl px-4 py-2 bg-white border text-sm font-semibold"
+                onClick={() => alert("Data model lives in CANDYVERSE_DATA → planets[]")}
+              >
+                View Data Model
+              </button>
+              <button
+                className="rounded-xl px-4 py-2 bg-green-600 text-white text-sm font-semibold"
+                onClick={async () => {
+                  const success = await router.copyLink();
+                  alert(success ? "Link copied to clipboard!" : "Failed to copy link");
+                }}
+              >
+                Copy Link
+              </button>
             </div>
           </div>
         </div>
@@ -359,7 +221,7 @@ export default function VirtualCandyPrototype() {
 
       {/* Quiz CTA */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-3xl bg-gradient-to-r from-pink-600 to-rose-500 text-white p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
+        <div className="rounded-3xl bg-linear-to-r from-pink-600 to-rose-500 text-white p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
           <div>
             <h3 className="text-2xl font-extrabold">Find your Flavor Personality</h3>
             <p className="text-white/90 text-sm mt-1">Take our 45‑second quiz. Get a personalized candy list and discount codes.</p>
@@ -377,7 +239,7 @@ export default function VirtualCandyPrototype() {
               <Dot /> Latest issue
             </div>
             <h4 className="mt-2 text-lg font-bold">Freeze‑Dried Frenzy + 5 Giftable Boxes Under $25</h4>
-            <p className="mt-1 text-sm text-slate-600">We tested crunchy space‑candy, tracked TikTok trends, and found budget boxes that don’t taste like regret.</p>
+            <p className="mt-1 text-sm text-slate-600">We tested crunchy space‑candy, tracked TikTok trends, and found budget boxes that don&apos;t taste like regret.</p>
           </div>
           <form className="flex md:justify-end items-center gap-3">
             <input placeholder="you@domain.com" className="w-full md:w-64 rounded-xl border px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
@@ -426,10 +288,10 @@ export default function VirtualCandyPrototype() {
       </footer>
 
       {/* Dev tests panel (visible only when ?dev=1) */}
-      {enableDev && <DevTests />}
+      {isDevMode() && <DevTests />}
 
       {modal && (
-        <Modal onClose={() => setModal(null)}>
+        <Modal onClose={handleModalClose}>
           <div className="space-y-1">
             <div className="text-xs text-slate-500">{modal.planetName} → {modal.constellationName}</div>
             <h3 className="text-lg font-bold">Featured treats</h3>
@@ -438,7 +300,7 @@ export default function VirtualCandyPrototype() {
             {modal.products.map((p) => (
               <div key={p.id} className="rounded-2xl border p-4 bg-white">
                 <div className="flex items-center gap-3">
-                  <div className="size-12 rounded-xl bg-gradient-to-br from-amber-50 to-pink-50 flex items-center justify-center text-xl">{p.image}</div>
+                  <div className="size-12 rounded-xl bg-linear-to-br from-amber-50 to-pink-50 flex items-center justify-center text-xl">{p.image}</div>
                   <div>
                     <div className="text-sm font-semibold">{p.name}</div>
                     <div className="text-[12px] text-slate-500">{p.vendor} • {p.price}</div>
@@ -454,11 +316,10 @@ export default function VirtualCandyPrototype() {
     </div>
   );
 }
-
 // =========================
-// Presentational Bits
+// Presentational Components
 // =========================
-function SectionHeader({ title, subtitle }) {
+function SectionHeader({ title, subtitle }: { title: string; subtitle: string; }) {
   return (
     <div className="mb-6 flex items-end justify-between">
       <div>
@@ -469,19 +330,16 @@ function SectionHeader({ title, subtitle }) {
     </div>
   );
 }
-
-function Badge({ children }) {
+function Badge({ children }: { children: React.ReactNode; }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-700 border">
       <Dot /> {children}
     </span>
   );
 }
-
 function Dot() {
   return <span className="inline-block size-1.5 rounded-full bg-current"></span>;
 }
-
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" className="size-7 text-pink-600" aria-hidden>
@@ -498,11 +356,10 @@ function Logo() {
     </svg>
   );
 }
-
-function ArticleCard({ tag, title, blurb }) {
+function ArticleCard({ tag, title, blurb }: { tag: string; title: string; blurb: string; }) {
   return (
     <article className="group rounded-3xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition">
-      <div className="aspect-[16/9] bg-gradient-to-br from-amber-100 via-pink-100 to-white flex items-center justify-center text-5xl">🍬</div>
+      <div className="aspect-video bg-linear-to-br from-amber-100 via-pink-100 to-white flex items-center justify-center text-5xl">🍬</div>
       <div className="p-5">
         <div className="text-xs font-semibold text-amber-700">{tag}</div>
         <h3 className="mt-1 text-lg font-bold group-hover:text-pink-700 transition">{title}</h3>
@@ -516,22 +373,26 @@ function ArticleCard({ tag, title, blurb }) {
     </article>
   );
 }
-
-function ProductCard({ vendor, name, price, href, note }) {
+function ProductCard({ vendor, name, price, href, note }: {
+  vendor: string;
+  name: string;
+  price: string;
+  href: string;
+  note?: string;
+}) {
   return (
     <div className="group rounded-3xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition">
-      <div className="aspect-square bg-gradient-to-br from-white via-rose-50 to-amber-50 flex items-center justify-center text-6xl">🍭</div>
+      <div className="aspect-square bg-linear-to-br from-white via-rose-50 to-amber-50 flex items-center justify-center text-6xl">🍭</div>
       <div className="p-5">
         <div className="text-xs font-semibold text-slate-500">{vendor}</div>
         <h3 className="mt-1 text-base font-bold">{name}</h3>
         <div className="mt-1 text-sm text-slate-600">{price}</div>
         <a href={href} className="mt-3 inline-block text-sm font-semibold text-pink-700 hover:underline" target="_blank" rel="noreferrer">Shop →</a>
-        <div className="mt-2 text-[11px] text-slate-400">{note}</div>
+        {note && <div className="mt-2 text-[11px] text-slate-400">{note}</div>}
       </div>
     </div>
   );
 }
-
 function CandyHeroCard() {
   return (
     <div className="relative rounded-3xl border bg-white p-6 shadow-md overflow-hidden">
@@ -543,7 +404,7 @@ function CandyHeroCard() {
           <span className="text-xs text-slate-500">Updated hourly</span>
         </div>
         <h3 className="mt-2 text-2xl font-extrabold">Freeze‑Dried Candy Is Having a Moment</h3>
-        <p className="mt-1 text-sm text-slate-600">Crunchy, airy, and dangerously snackable. We tested the internet’s favorites and found the real top picks.</p>
+        <p className="mt-1 text-sm text-slate-600">Crunchy, airy, and dangerously snackable. We tested the internet&apos;s favorites and found the real top picks.</p>
         <div className="mt-4 grid grid-cols-3 gap-3">
           <MiniItem name="Rainbow Bites" vendor="CandyWarehouse" />
           <MiniItem name="Astronaut Taffy" vendor="Amazon" />
@@ -557,29 +418,53 @@ function CandyHeroCard() {
     </div>
   );
 }
-
-function MiniItem({ name, vendor }) {
+function MiniItem({ name, vendor }: { name: string; vendor: string; }) {
   return (
     <div className="rounded-2xl border bg-white p-3 text-xs">
-      <div className="aspect-square rounded-xl bg-gradient-to-br from-pink-100 to-amber-100 flex items-center justify-center">✨</div>
+      <div className="aspect-square rounded-xl bg-linear-to-br from-pink-100 to-amber-100 flex items-center justify-center">✨</div>
       <div className="mt-2 font-semibold">{name}</div>
       <div className="text-slate-500">{vendor}</div>
     </div>
   );
 }
+// Generate stable mock stars for the Candyverse scene with seeded positions
+const generateMockStars = () => {
+  return Array.from({ length: 80 }).map((_, i) => {
+    const seed = i * 9301 + 49297;
+    const rng = (n: number) => ((seed + n * 233280) % 233280) / 233280;
+    return {
+      id: i,
+      width: rng(1) * 2 + 1,
+      height: rng(2) * 2 + 1,
+      top: `${rng(3) * 100}%`,
+      left: `${rng(4) * 100}%`,
+      opacity: rng(5)
+    };
+  });
+};
 
-function CandyverseScene({ onOpen }: { onOpen: (payload: { planetId: string; planetName: string; constellationId: string; constellationName: string; products: Product[] }) => void }) {
+const MOCK_STARS = generateMockStars();
+
+function CandyverseScene({ onOpen }: { onOpen: (planetId: string, constellationId: string) => void; }) {
+  // Use pre-generated stable star positions
+  const stars = MOCK_STARS;
+
   return (
     <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <div className="aspect-video rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+      <div className="aspect-video rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
         {/* Mock starfield */}
         <div className="absolute inset-0">
-          {Array.from({ length: 80 }).map((_, i) => (
+          {stars.map((star) => (
             <span
-              key={i}
+              key={star.id}
               className="absolute rounded-full bg-white/80"
-              style={{ width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, opacity: Math.random() }}
-            />
+              style={{
+                width: star.width,
+                height: star.height,
+                top: star.top,
+                left: star.left,
+                opacity: star.opacity
+              }} />
           ))}
         </div>
         {/* Planets from data */}
@@ -590,47 +475,57 @@ function CandyverseScene({ onOpen }: { onOpen: (payload: { planetId: string; pla
             x={p.x}
             y={p.y}
             color={p.color}
-            onClick={() =>
-              onOpen({
-                planetId: p.id,
-                planetName: p.name,
-                constellationId: p.constellations[0].id,
-                constellationName: p.constellations[0].name,
-                products: p.constellations[0].products as Product[],
-              })
-            }
-          />
+            onClick={() => onOpen(p.id, p.constellations[0].id)} />
         ))}
         <div className="absolute bottom-3 left-3 text-xs text-white/80">Prototype: Click a planet → modal with products</div>
       </div>
     </div>
   );
 }
-
-function Planet({ name, x, y, color, onClick }: { name: string; x: string; y: string; color: string; onClick: () => void }) {
+function Planet({ name, x, y, color, onClick }: { name: string; x: string; y: string; color: string; onClick: () => void; }) {
   return (
-    <button className="absolute -translate-x-1/2 -translate-y-1/2 group" style={{ left: x, top: y }} onClick={onClick}>
+    <button
+      className="absolute -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full"
+      style={{ left: x, top: y }}
+      onClick={onClick}
+      aria-label={`Explore ${name} planet`}
+    >
       <div className="size-16 rounded-full shadow-[0_0_0_4px_rgba(255,255,255,0.1)]" style={{ background: color }} />
       <div className="mt-1 text-[11px] text-white/90 text-center">{name}</div>
     </button>
   );
 }
+function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void; }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
 
-function Modal({ children, onClose }: { children: any; onClose: () => void }) {
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute inset-x-0 top-10 mx-auto max-w-3xl rounded-3xl bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold">Candyverse Picks</div>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-700">✕</button>
+          <button
+            onClick={onClose}
+            className="text-slate-500 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-pink-300 rounded p-1"
+            aria-label="Close modal"
+          >
+            ✕
+          </button>
         </div>
         <div className="mt-3">{children}</div>
       </div>
     </div>
   );
 }
-
 // =========================
 // Dev Tests UI (shown with ?dev=1)
 // =========================
@@ -639,7 +534,7 @@ function DevTests() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="rounded-2xl border bg-white p-4 text-sm">
-        <div className="font-bold mb-2">Dev Tests</div>
+        <div className="font-bold mb-2">Dev Tests Panel</div>
         <ul className="list-disc list-inside text-slate-700 space-y-1">
           <li>Expect no duplicate planet IDs.</li>
           <li>Expect each constellation to expose a products array.</li>
