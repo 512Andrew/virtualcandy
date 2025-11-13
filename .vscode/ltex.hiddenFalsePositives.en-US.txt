@@ -1,1 +1,2 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qvirtualcandy\\E$"}
+{"rule":"THE_SUPERLATIVE","sentence":"^\\QUpdated from 16.0.1 → 16.0.2 (latest stable)\\E$"}

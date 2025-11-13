@@ -3,7 +3,7 @@ import { CANDYVERSE_DATA } from "@/data/candyverse";
 import { getFeaturedProducts } from "@/lib/helpers";
 import { useCandyverseRouter, useQueryParams } from "@/lib/routing";
 import { Product } from "@/types";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 // =========================
 // Component
@@ -342,7 +342,7 @@ function Dot() {
 }
 function Logo() {
   return (
-    <svg viewBox="0 0 48 48" className="size-7 text-pink-600" aria-hidden>
+    <svg viewBox="0 0 48 48" className="size-7 text-pink-600" aria-hidden="true">
       <defs>
         <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#ec4899" />
@@ -427,20 +427,27 @@ function MiniItem({ name, vendor }: { name: string; vendor: string; }) {
     </div>
   );
 }
-// Generate stable mock stars for the Candyverse scene
+// Generate stable mock stars for the Candyverse scene with seeded positions
 const generateMockStars = () => {
-  return Array.from({ length: 80 }).map((_, i) => ({
-    id: i,
-    width: Math.random() * 2 + 1,
-    height: Math.random() * 2 + 1,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    opacity: Math.random()
-  }));
+  return Array.from({ length: 80 }).map((_, i) => {
+    const seed = i * 9301 + 49297;
+    const rng = (n: number) => ((seed + n * 233280) % 233280) / 233280;
+    return {
+      id: i,
+      width: rng(1) * 2 + 1,
+      height: rng(2) * 2 + 1,
+      top: `${rng(3) * 100}%`,
+      left: `${rng(4) * 100}%`,
+      opacity: rng(5)
+    };
+  });
 };
+
+const MOCK_STARS = generateMockStars();
+
 function CandyverseScene({ onOpen }: { onOpen: (planetId: string, constellationId: string) => void; }) {
-  // Generate stable star positions
-  const stars = useMemo(() => generateMockStars(), []);
+  // Use pre-generated stable star positions
+  const stars = MOCK_STARS;
 
   return (
     <div className="rounded-3xl border bg-white p-6 shadow-sm">
