@@ -7,6 +7,6 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Emails plugin - configured in Netlify UI, kept for compatibility
+# Emails plugin - required for email functionality
 [[plugins]]
   package = "@netlify/plugin-emails"
