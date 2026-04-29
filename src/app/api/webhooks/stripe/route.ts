@@ -11,7 +11,7 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 // Create a Supabase admin client to bypass RLS for webhook operations
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SECRET_KEY!
 )
 
 export async function POST(req: Request) {
