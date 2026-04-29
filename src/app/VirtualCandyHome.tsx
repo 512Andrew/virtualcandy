@@ -5,6 +5,8 @@ import { useCandyverseRouter, useQueryParams } from "@/lib/routing";
 import { Product } from "@/types";
 import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
+import { useCart } from "@/store/cart";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 // Dynamically import the 3D scene to avoid SSR issues with Three.js
 const CandyverseScene3D = dynamic(
@@ -241,20 +243,7 @@ export default function VirtualCandyHome() {
 
       {/* Newsletter */}
       <section id="newsletter" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <SectionHeader title="The Sugar Feed" subtitle="Weekly drops of reviews, deals, and candy lore." />
-        <div className="rounded-3xl border bg-white p-6 shadow-sm grid md:grid-cols-[1.5fr_1fr] gap-6">
-          <div>
-            <div className="flex items-center gap-2 text-amber-700 text-xs font-semibold uppercase tracking-wider">
-              <Dot /> Latest issue
-            </div>
-            <h4 className="mt-2 text-lg font-bold">Freeze‑Dried Frenzy + 5 Giftable Boxes Under $25</h4>
-            <p className="mt-1 text-sm text-slate-600">We tested crunchy space‑candy, tracked TikTok trends, and found budget boxes that don&apos;t taste like regret.</p>
-          </div>
-          <form className="flex md:justify-end items-center gap-3">
-            <input placeholder="you@domain.com" className="w-full md:w-64 rounded-xl border px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
-            <button className="rounded-xl px-4 py-3 bg-pink-600 text-white text-sm font-semibold hover:bg-pink-700">Subscribe</button>
-          </form>
-        </div>
+        <NewsletterSignup />
       </section>
 
       {/* Footer */}
@@ -315,7 +304,7 @@ export default function VirtualCandyHome() {
                     <div className="text-[12px] text-slate-500">{p.vendor} • {p.price}</div>
                   </div>
                 </div>
-                <a href={p.url} className="mt-3 inline-block text-sm font-semibold text-pink-700 hover:underline" target="_blank" rel="noreferrer">Shop →</a>
+                <AddToCartButton product={p} />
                 <div className="mt-1 text-[11px] text-slate-400">{p.note}</div>
               </div>
             ))}
@@ -336,6 +325,20 @@ function CandyverseSceneFallback() {
         <div className="text-white/80 text-sm">Loading Candyverse...</div>
       </div>
     </div>
+  );
+}
+
+function AddToCartButton({ product }: { product: any }) {
+  const cart = useCart();
+  const priceValue = typeof product.price === 'string' ? parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0 : product.price;
+
+  return (
+    <button
+      onClick={() => cart.addItem({ id: product.id, name: product.name, price: priceValue || 10, quantity: 1, image_url: product.image })}
+      className="mt-3 inline-block rounded-xl bg-pink-600 text-white px-4 py-2 text-sm font-semibold hover:bg-pink-700 transition"
+    >
+      Add to Cart
+    </button>
   );
 }
 
@@ -407,7 +410,7 @@ function ProductCard({ vendor, name, price, href, note }: {
         <div className="text-xs font-semibold text-slate-500">{vendor}</div>
         <h3 className="mt-1 text-base font-bold">{name}</h3>
         <div className="mt-1 text-sm text-slate-600">{price}</div>
-        <a href={href} className="mt-3 inline-block text-sm font-semibold text-pink-700 hover:underline" target="_blank" rel="noreferrer">Shop →</a>
+        <button className="mt-3 inline-block rounded-xl bg-pink-600 text-white px-4 py-2 text-sm font-semibold hover:bg-pink-700 transition">View Details</button>
         {note && <div className="mt-2 text-[11px] text-slate-400">{note}</div>}
       </div>
     </div>
