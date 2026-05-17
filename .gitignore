@@ -184,3 +184,6 @@ app.old/
 virtual-candy/
 
 .fake
+
+# Local history
+.history/
