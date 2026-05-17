@@ -6,7 +6,3 @@
 # Next.js plugin for Netlify - handles deployment automatically
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Emails plugin - required for email functionality
-[[plugins]]
-  package = "@netlify/plugin-emails"
