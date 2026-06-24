@@ -13,10 +13,16 @@
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
+    "@stripe/stripe-js": "^9.3.0",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.104.0",
+    "lucide-react": "^1.8.0",
     "next": "^16.2.6",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "three": "^0.182.0"
+    "stripe": "^22.0.2",
+    "three": "^0.182.0",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.15.11",
@@ -32,5 +38,9 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.15"
   }
 }
+
