@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Package, LayoutDashboard, LogOut } from 'lucide-react'
+import { Package, LayoutDashboard, LogOut, ShoppingCart } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
