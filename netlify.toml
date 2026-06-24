@@ -1,0 +1,12 @@
+# Netlify configuration for Next.js deployment
+
+[build]
+  command = "npm run build"
+
+# Next.js plugin for Netlify - handles deployment automatically
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Emails plugin - required for email functionality
+[[plugins]]
+  package = "@netlify/plugin-emails"
