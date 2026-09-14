@@ -2,7 +2,7 @@
 :root {
   --ink: #191c1a;
   --paper: #f7f8f3;
-  --lime: #d7fa62;
+  --lime: #c5e952;
   --pink: #f1b9d9;
   --muted: #61665f;
   --line: #d9ddd3;
@@ -1072,10 +1072,10 @@ footer > div {
   text-shadow: 0 1px 8px #001b0b;
 }
 .hero-art .art-label {
-  background: #142018a8;
-  padding: 8px;
-  top: 24px;
-  left: 24px;
+  top: 32px;
+  left: 32px;
+  font-size: 11px;
+  letter-spacing: 0.17em;
 }
 .theme-picker {
   display: flex;
@@ -1112,9 +1112,14 @@ footer > div {
     border-color 0.2s;
   min-width: 0;
 }
-.client-card:hover {
-  transform: translateY(-5px);
-  border-color: #4b643b;
+.client-card:is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+  border-color: #738c3a;
+  animation: client-spark 650ms ease-out;
+}
+@keyframes client-spark {
+  0%, 100% { box-shadow: 0 0 0 0 #b9ec4a00; }
+  35% { box-shadow: 0 0 0 2px #b9ec4a66, 0 0 18px #b9ec4a26; }
 }
 .client-top {
   display: flex;
@@ -1149,14 +1154,14 @@ footer > div {
 }
 .client-1,
 .client-5 {
-  background: #dfe8d4;
+  background: #d6e2c8;
 }
 .client-2,
 .client-6 {
   background: #efdae7;
 }
 .client-3 {
-  background: #e6eadb;
+  background: #dfe5d2;
 }
 html[data-resolved-theme="dark"] {
   color-scheme: dark;
@@ -1301,5 +1306,16 @@ html[data-resolved-theme="dark"] .client-monogram span {
   }
   .client-monogram {
     padding: 18px 0;
+  }
+}
+
+/* Keep the electric accent brief and respect reduced-motion preferences. */
+html[data-resolved-theme="dark"] .client-card:is(:hover, :focus-visible) {
+  border-color: #b9dc67;
+}
+@media (prefers-reduced-motion: reduce) {
+  .client-card:is(:hover, :focus-visible) {
+    animation: none;
+    transform: none;
   }
 }

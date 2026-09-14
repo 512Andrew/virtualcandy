@@ -35,3 +35,10 @@ Uses the existing Next.js package and npm lockfile. Static export is in out/. Ru
 - Added Auto/Light/Dark appearance selection, system-change subscription, pre-render theme initialization and saved visitor override.
 - Replaced illustrative work studies with all seven owner-requested client links. Names checked against destination page titles; no unverified project scope or outcome claims added.
 - Build and targeted lint passed. Hosted browser checks: image loads, seven client links, dark override persists after reload, Auto matches system dark setting, mobile width has no horizontal overflow.
+
+## Palette and interaction refinement
+- Deepened lime accents and green client backgrounds; preserved the periodic-table layout.
+- Matched hero caption to the lower artwork index, with transparent background.
+- Added a single 650ms electric-green card highlight on hover/keyboard focus, disabled with reduced motion.
+- Static build and diff checks passed. Hosted checks confirmed transparent caption, matching 11px typography, single animation iteration, and no overflow at 797px/390px. Light and dark themes visually checked.
+- Draft: https://6aa78ba3dace99b073262387--melodious-squirrel-f66679.netlify.app
