@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
+import ThemePicker from "./ThemePicker";
 
 const money = (n: number) =>
   new Intl.NumberFormat("en-US", {
@@ -109,7 +111,6 @@ export default function Home() {
     [pkg, setPkg] = useState("launch"),
     [selected, setSelected] = useState<number[]>([]),
     [care, setCare] = useState(0),
-    [activeWork, setActiveWork] = useState<number | null>(null),
     [notice, setNotice] = useState("");
   const base = pkg === "launch" ? 750 : 1500,
     total = base + selected.reduce((s, i) => s + extras[i].price, 0),
@@ -158,6 +159,7 @@ export default function Home() {
             virtual candy<small>INDEPENDENT DIGITAL STUDIO</small>
           </span>
         </a>
+        <ThemePicker />
         <button
           className="menu"
           aria-expanded={menu}
@@ -198,17 +200,21 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            <div className="art-grid" />
-            <div className="orb orb-one" />
-            <div className="orb orb-two" />
-            <div className="orbit" />
+          <div className="hero-art">
+            <Image
+              className="hero-sculpture"
+              src="/tesla-brain.png"
+              alt="A pink glass brain atop a copper Tesla coil, sparking with lime-green electricity."
+              fill
+              priority
+              unoptimized
+              sizes="(max-width: 760px) 88vw, 44vw"
+            />
             <div className="art-label">
               IMAGINATION,
               <br />
               PUT TO WORK.
             </div>
-            <div className="art-symbol">✳</div>
             <span className="art-index">VC / STUDIO NO. 01</span>
           </div>
           <div className="hero-foot">
@@ -270,87 +276,47 @@ export default function Home() {
         </section>
         <section id="work" className="section work">
           <div className="section-heading">
-            <span className="eyebrow">02 / THE POSSIBILITIES</span>
+            <span className="eyebrow">02 / CLIENT EXAMPLES</span>
             <h2>
               Different ideas.
               <br />
               <span>The same curiosity.</span>
             </h2>
             <p>
-              A look at the kinds of work we build—and the original world that gave the studio its
-              name.
+              Independent businesses, distinct personalities. Explore a few of the clients in our
+              growing circle.
             </p>
           </div>
-          <div className="work-grid">
-            <article className="work-card">
-              <div className="work-visual profile">
-                <span>STUDIO STUDY / 01</span>
-                <div className="sample-title">
-                  A name.
-                  <br />A point of view.
-                  <br />
-                  <i>A place to begin.</i>
+          <div className="client-grid">
+            {[
+              ["Adam’s Wrench", "adamswrench.com", "AW"],
+              ["SmartLink Realty", "smartlinkrealty.net", "SL"],
+              ["Crystal Rivas · ATX Crystal", "atxcrystal.com", "CR"],
+              ["Texas Prime Credit", "texasprimecredit.com", "TP"],
+              ["Psych Services of Roane County", "psych-services-wv.com", "PS"],
+              ["Jean Kirkman", "jeankirkman.com", "JK"],
+              ["T&K USA TX", "tkusatx.com", "TK"],
+            ].map(([name, domain, initials], i) => (
+              <a
+                className={`client-card client-${i}`}
+                key={domain}
+                href={`https://www.${domain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visit ${name} (opens in a new tab)`}
+              >
+                <div className="client-top">
+                  <span>CLIENT / {String(i + 1).padStart(2, "0")}</span>
+                  <span aria-hidden="true">↗</span>
                 </div>
-                <span>PROFESSIONAL PRESENCE</span>
-              </div>
-              <div className="work-caption">
-                <div>
-                  <small>ILLUSTRATIVE DIRECTION</small>
-                  <h3>A home for your expertise</h3>
+                <div className="client-monogram" aria-hidden="true">
+                  {initials}
+                  <span>✳</span>
                 </div>
-                <button
-                  aria-expanded={activeWork === 0}
-                  onClick={() => setActiveWork(activeWork === 0 ? null : 0)}
-                  aria-label="Read about professional websites"
-                >
-                  {activeWork === 0 ? "−" : "+"}
-                </button>
-              </div>
-              {activeWork === 0 && (
-                <p className="work-detail">
-                  Professional profiles and service sites give people a clear introduction, useful
-                  information and a way to reach you. This is a studio concept, not a claimed client
-                  result.
-                </p>
-              )}
-            </article>
-            <article className="work-card">
-              <div className="work-visual systems">
-                <span>STUDIO STUDY / 02</span>
-                <div className="flow">
-                  <div>
-                    New inquiry <b>↘</b>
-                  </div>
-                  <div>
-                    Right place <b>↘</b>
-                  </div>
-                  <div>
-                    Next step <b>✓</b>
-                  </div>
-                </div>
-                <span>CONNECTED BUSINESS SYSTEMS</span>
-              </div>
-              <div className="work-caption">
-                <div>
-                  <small>ILLUSTRATIVE WORKFLOW</small>
-                  <h3>Give every lead a next step</h3>
-                </div>
-                <button
-                  aria-expanded={activeWork === 1}
-                  onClick={() => setActiveWork(activeWork === 1 ? null : 1)}
-                  aria-label="Read about business automation"
-                >
-                  {activeWork === 1 ? "−" : "+"}
-                </button>
-              </div>
-              {activeWork === 1 && (
-                <p className="work-detail">
-                  A form can begin a useful workflow: map the fields, route the inquiry, and make
-                  follow-up visible. Every integration is scoped around the tools your business
-                  actually uses.
-                </p>
-              )}
-            </article>
+                <h3>{name}</h3>
+                <p>{domain}</p>
+              </a>
+            ))}
           </div>
           <a
             className="candyverse"

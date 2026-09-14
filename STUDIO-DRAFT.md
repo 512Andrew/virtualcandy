@@ -28,3 +28,10 @@ Uses the existing Next.js package and npm lockfile. Static export is in out/. Ru
 - Mobile navigation worked; no horizontal page overflow observed at 390px or 1440px viewport.
 - Download action reported a prepared local brief, with no automatic send.
 - FAQ care answer expanded correctly.
+
+## September 14 update
+- Replaced abstract hero geometry with original generated pink-glass brain/Tesla-coil artwork, preserving the tagline and wildcard accents elsewhere.
+- Added pixel-style green-on-green vc* favicon.
+- Added Auto/Light/Dark appearance selection, system-change subscription, pre-render theme initialization and saved visitor override.
+- Replaced illustrative work studies with all seven owner-requested client links. Names checked against destination page titles; no unverified project scope or outcome claims added.
+- Build and targeted lint passed. Hosted browser checks: image loads, seven client links, dark override persists after reload, Auto matches system dark setting, mobile width has no horizontal overflow.

@@ -14,7 +14,14 @@ export const metadata: Metadata = {
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t="auto";try{var s=localStorage.getItem("vc-theme");if(["auto","light","dark"].includes(s))t=s;}catch(e){}var r=document.documentElement;r.dataset.theme=t;r.dataset.resolvedTheme=t==="auto"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):t;})();`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
