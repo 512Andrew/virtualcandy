@@ -187,3 +187,5 @@ virtual-candy/
 
 # Local history
 .history/
+# Local Netlify folder
+.netlify
