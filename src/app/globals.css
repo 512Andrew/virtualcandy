@@ -1118,8 +1118,15 @@ footer > div {
   animation: client-spark 650ms ease-out;
 }
 @keyframes client-spark {
-  0%, 100% { box-shadow: 0 0 0 0 #b9ec4a00; }
-  35% { box-shadow: 0 0 0 2px #b9ec4a66, 0 0 18px #b9ec4a26; }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #b9ec4a00;
+  }
+  35% {
+    box-shadow:
+      0 0 0 2px #b9ec4a66,
+      0 0 18px #b9ec4a26;
+  }
 }
 .client-top {
   display: flex;
@@ -1318,4 +1325,71 @@ html[data-resolved-theme="dark"] .client-card:is(:hover, :focus-visible) {
     animation: none;
     transform: none;
   }
+}
+/* Launch policy pages reuse the studio palette and remain readable at high zoom. */
+.legal-page {
+  max-width: 860px;
+  margin: auto;
+  padding: 48px 24px 80px;
+}
+.legal-page h1 {
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  line-height: 1.12;
+  margin: 32px 0 16px;
+  overflow-wrap: anywhere;
+}
+.legal-page h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  margin: 32px 0 12px;
+}
+.legal-page p {
+  margin: 16px 0;
+}
+.legal-page a,
+.privacy a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.legal-page nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 40px;
+}
+footer > div {
+  flex-wrap: wrap;
+}
+footer a,
+.legal-page nav a {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+}
+html[data-resolved-theme="dark"] :is(a, button, summary, select, input, textarea):focus-visible {
+  outline-color: #e3a6cc;
+}
+.skip {
+  color: #191c1a;
+}
+.inquiry-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

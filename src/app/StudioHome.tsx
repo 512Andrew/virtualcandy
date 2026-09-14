@@ -1,0 +1,622 @@
+"use client";
+import { useState, useSyncExternalStore } from "react";
+import Image from "next/image";
+import ThemePicker from "./ThemePicker";
+
+const money = (n: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
+const extras = [
+  {
+    name: "Additional page",
+    price: 200,
+    note: "One page using your site’s design and supplied content.",
+  },
+  {
+    name: "Original page copy",
+    price: 150,
+    note: "Up to 500 words from your brief, with one revision.",
+  },
+  {
+    name: "Research & messaging",
+    price: 250,
+    note: "A focused positioning brief for one business.",
+  },
+  {
+    name: "Additional contact form",
+    price: 100,
+    note: "Up to eight fields, delivered to one inbox.",
+  },
+  {
+    name: "Appointment booking",
+    price: 150,
+    note: "Starting price. Connect one existing scheduling service.",
+    quote: true,
+  },
+  {
+    name: "Portfolio expansion",
+    price: 150,
+    note: "Up to 12 supplied entries in your existing layout.",
+  },
+  {
+    name: "Blog or CMS",
+    price: 400,
+    note: "Starting price. A simple way to publish your own content.",
+    quote: true,
+  },
+  {
+    name: "CRM lead routing",
+    price: 300,
+    note: "Starting price. Connect one form to one existing system.",
+    quote: true,
+  },
+];
+const plans = [
+  {
+    name: "No care plan",
+    price: 0,
+    note: "Your hosting, your schedule. Help available separately.",
+  },
+  {
+    name: "Essential",
+    price: 59,
+    note: "Hosting allowance, monitoring, form checks and routine maintenance.",
+  },
+  {
+    name: "Care",
+    price: 129,
+    note: "Essential plus 30 minutes of content edits and a monthly review.",
+  },
+  {
+    name: "Studio Support",
+    price: 249,
+    note: "Essential plus 90 minutes of edits and a short planning check-in.",
+  },
+];
+import { faqs } from "@/lib/faqs";
+import Link from "next/link";
+
+const subscribe = () => () => {};
+export default function Home() {
+  const interactive = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
+  );
+  const [menu, setMenu] = useState(false),
+    [pkg, setPkg] = useState("launch"),
+    [selected, setSelected] = useState<number[]>([]),
+    [care, setCare] = useState(0),
+    [notice, setNotice] = useState("");
+  const base = pkg === "launch" ? 750 : 1500,
+    total = base + selected.reduce((s, i) => s + extras[i].price, 0),
+    monthly = plans[care].price,
+    estimated = selected.some((i) => extras[i].quote);
+  const summary = `Virtual Candy Studio project brief\nPackage: ${pkg === "launch" ? "Launch" : "Business"}\nOptions: ${selected.map((i) => extras[i].name).join(", ") || "None"}\nProject ${estimated ? "starting estimate" : "estimate"}: ${money(total)}\nCare: ${plans[care].name} (${money(monthly)}/month)\nFirst year studio fees: ${money(total + monthly * 12)}\nExternal fees and taxes excluded. Scope subject to written confirmation.`;
+  function downloadBrief(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const text =
+      summary +
+      `\n\nName: ${data.get("name")}\nEmail: ${data.get("email")}\nBusiness: ${data.get("business")}\nGoal: ${data.get("message")}\n`;
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (submitter?.value === "email") {
+      window.location.href =
+        "mailto:info@virtualcandy.com?subject=" +
+        encodeURIComponent("Project inquiry — Virtual Candy Studio") +
+        "&body=" +
+        encodeURIComponent(text);
+      setNotice(
+        "Your email app will open with your brief. Review it and press Send there. If no email app opens, download the brief and email it to info@virtualcandy.com."
+      );
+      return;
+    }
+    const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "virtual-candy-project-brief.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    setNotice(
+      "Your brief has been downloaded. Email it to info@virtualcandy.com when you’re ready. Nothing has been sent automatically."
+    );
+  }
+  return (
+    <>
+      <a className="skip" href="#main">
+        Skip to content
+      </a>
+      <header className="header">
+        <a href="#" className="brand" aria-label="Virtual Candy Studio home">
+          <span className="mark">
+            vc<span>✳</span>
+          </span>
+          <span>
+            virtual candy<small>INDEPENDENT DIGITAL STUDIO</small>
+          </span>
+        </a>
+        <ThemePicker />
+        <button
+          className="menu"
+          aria-expanded={menu}
+          aria-controls="navigation"
+          onClick={() => setMenu(!menu)}
+        >
+          {menu ? "Close" : "Menu"}
+        </button>
+        <nav id="navigation" className={menu ? "open" : ""} aria-label="Main navigation">
+          {["Services", "Work", "Pricing", "About"].map((t) => (
+            <a key={t} href={`#${t.toLowerCase()}`} onClick={() => setMenu(false)}>
+              {t}
+            </a>
+          ))}
+          <a className="nav-cta" href="#contact" onClick={() => setMenu(false)}>
+            Let’s make something <span>↗</span>
+          </a>
+        </nav>
+      </header>
+      <main id="main" tabIndex={-1}>
+        <section className="hero">
+          <div className="hero-copy">
+            <div className="eyebrow">GOOD IDEAS DESERVE TO GET OUT THERE.</div>
+            <h1>
+              A little
+              <br />
+              unexpected.
+              <br />
+              <em>A lot of useful.</em>
+            </h1>
+            <div className="hero-bottom">
+              <p>
+                Distinctive websites. Clearer stories. Systems that save you time. Built for people
+                making something of their own.
+              </p>
+              <a className="button lime" href="#pricing">
+                Find your starting point <span>↗</span>
+              </a>
+            </div>
+          </div>
+          <div className="hero-art">
+            <Image
+              className="hero-sculpture"
+              src="/tesla-brain.png"
+              alt="A pink glass brain atop a copper Tesla coil, sparking with lime-green electricity."
+              fill
+              priority
+              unoptimized
+              sizes="(max-width: 760px) 88vw, 44vw"
+            />
+            <div className="art-label">
+              IMAGINATION,
+              <br />
+              PUT TO WORK.
+            </div>
+            <span className="art-index">VC / STUDIO NO. 01</span>
+          </div>
+          <div className="hero-foot">
+            <span>INDEPENDENT SPIRIT. PRACTICAL THINKING.</span>
+            <a href="#services">Explore the studio ↓</a>
+          </div>
+        </section>
+        <div className="ticker" aria-label="Studio specialties">
+          <span>MAKE AN IMPRESSION</span>
+          <b>✳</b>
+          <span>MAKE IT WORK</span>
+          <b>✳</b>
+          <span>MAKE IT YOURS</span>
+          <b>✳</b>
+          <span>VIRTUAL CANDY STUDIO</span>
+        </div>
+        <section id="services" className="section">
+          <div className="section-heading">
+            <span className="eyebrow">01 / WHAT WE DO</span>
+            <h2>
+              Small studio.
+              <br />
+              <span>Wide-open possibilities.</span>
+            </h2>
+            <p>
+              Start with the thing your business needs most. We’ll connect the pieces as you grow.
+            </p>
+          </div>
+          <div className="services">
+            {[
+              {
+                n: "01",
+                title: "Your presence.",
+                text: "A website that feels like you and makes the next step obvious.",
+                tags: "Websites · Landing pages · Portfolios",
+              },
+              {
+                n: "02",
+                title: "Your story.",
+                text: "Turn what you know into something your customers understand.",
+                tags: "Copy · Research · Brand materials",
+              },
+              {
+                n: "03",
+                title: "Your flow.",
+                text: "Fewer loose ends. Connect inquiries, calendars and follow-up.",
+                tags: "Forms · CRM · Practical automation",
+              },
+            ].map((s) => (
+              <article key={s.n}>
+                <span className="service-num">{s.n} /</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+                <div className="service-tags">{s.tags}</div>
+                <a href="#pricing">Explore options ↗</a>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section id="work" className="section work">
+          <div className="section-heading">
+            <span className="eyebrow">02 / CLIENT EXAMPLES</span>
+            <h2>
+              Different ideas.
+              <br />
+              <span>The same curiosity.</span>
+            </h2>
+            <p>
+              Independent businesses, distinct personalities. Explore a few of the clients in our
+              growing circle.
+            </p>
+          </div>
+          <div className="client-grid">
+            {[
+              ["Adam’s Wrench", "adamswrench.com", "AW"],
+              ["SmartLink Realty", "smartlinkrealty.net", "SL"],
+              ["Crystal Rivas · ATX Crystal", "atxcrystal.com", "CR"],
+              ["Texas Prime Credit", "texasprimecredit.com", "TP"],
+              ["Psych Services of Roane County", "psych-services-wv.com", "PS"],
+              ["Jean Kirkman", "jeankirkman.com", "JK"],
+              ["T&K USA TX", "tkusatx.com", "TK"],
+            ].map(([name, domain, initials], i) => (
+              <a
+                className={`client-card client-${i}`}
+                key={domain}
+                href={`https://www.${domain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visit ${name} (opens in a new tab)`}
+              >
+                <div className="client-top">
+                  <span>CLIENT / {String(i + 1).padStart(2, "0")}</span>
+                  <span aria-hidden="true">↗</span>
+                </div>
+                <div className="client-monogram" aria-hidden="true">
+                  {initials}
+                  <span>✳</span>
+                </div>
+                <h3>{name}</h3>
+                <p>{domain}</p>
+              </a>
+            ))}
+          </div>
+          <a
+            className="candyverse"
+            href="https://69165cdab57dc2c842d66ae3--melodious-squirrel-f66679.netlify.app"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div>
+              <small>FROM THE ARCHIVE / ORIGINAL CONCEPT</small>
+              <h3>Before the studio, there was a Candyverse.</h3>
+              <p>An interactive world of flavor, imagination and a name with a little history.</p>
+            </div>
+            <span>Explore the original ↗</span>
+          </a>
+        </section>
+        <section id="pricing" className="section pricing">
+          <div className="section-heading">
+            <span className="eyebrow">03 / BUILD YOUR STARTING POINT</span>
+            <h2>
+              Big possibilities.
+              <br />
+              <span>Approachable beginnings.</span>
+            </h2>
+            <p>
+              A complete website first. Thoughtful extras when you need them. Clear project and
+              monthly costs.
+            </p>
+          </div>
+          <div className="estimator">
+            <div className="choices">
+              <fieldset>
+                <legend>
+                  01 <span>Choose your foundation</span>
+                </legend>
+                <div className="packages">
+                  {[
+                    {
+                      id: "launch",
+                      name: "Launch",
+                      price: 750,
+                      description: "One focused page. One strong introduction.",
+                      features: "Up to 6 sections · Contact form · 1 revision round",
+                    },
+                    {
+                      id: "business",
+                      name: "Business",
+                      price: 1500,
+                      description: "Room to tell the whole story.",
+                      features: "Up to 5 pages · Contact form · 2 revision rounds",
+                    },
+                  ].map((p) => (
+                    <label key={p.id} className={`package ${pkg === p.id ? "chosen" : ""}`}>
+                      <input
+                        type="radio"
+                        name="package"
+                        checked={pkg === p.id}
+                        onChange={() => setPkg(p.id)}
+                      />
+                      <span className="package-name">{p.name}</span>
+                      <strong>{money(p.price)}</strong>
+                      <small>ONE-TIME PROJECT</small>
+                      <p>{p.description}</p>
+                      <span className="package-features">{p.features}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="included">
+                  Always included: mobile-friendly design, basic search setup, accessibility checks,
+                  domain connection and launch testing. You provide approved content and existing
+                  branding.
+                </p>
+              </fieldset>
+              <fieldset>
+                <legend>
+                  02 <span>Add what moves you forward</span>
+                </legend>
+                <div className="extras">
+                  {extras.map((x, i) => (
+                    <label key={x.name} className={selected.includes(i) ? "selected" : ""}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(i)}
+                        onChange={() =>
+                          setSelected(
+                            selected.includes(i)
+                              ? selected.filter((n) => n !== i)
+                              : [...selected, i]
+                          )
+                        }
+                      />
+                      <span>
+                        <b>{x.name}</b>
+                        <small>{x.note}</small>
+                      </span>
+                      <strong>
+                        {x.quote ? "from " : ""}
+                        {money(x.price)}
+                      </strong>
+                    </label>
+                  ))}
+                </div>
+                <p className="included">
+                  Need multiple pages, payments, a custom tool or something else? Tell us in your
+                  brief. We’ll scope it with you. Third-party fees are separate.
+                </p>
+              </fieldset>
+              <fieldset>
+                <legend>
+                  03 <span>Choose your ongoing support</span>
+                </legend>
+                <div className="care-options">
+                  {plans.map((p, i) => (
+                    <label key={p.name} className={care === i ? "selected" : ""}>
+                      <input
+                        type="radio"
+                        name="care"
+                        checked={care === i}
+                        onChange={() => setCare(i)}
+                      />
+                      <span>
+                        <b>{p.name}</b>
+                        <small>{p.note}</small>
+                      </span>
+                      <strong>
+                        {money(p.price)}
+                        <small>/mo</small>
+                      </strong>
+                    </label>
+                  ))}
+                </div>
+                <p className="included">
+                  Care is optional and starts at launch. Essential includes up to $10/month of
+                  hosting usage. Monthly edit time doesn’t roll over. Major upgrades and new
+                  features are quoted separately.
+                </p>
+              </fieldset>
+            </div>
+            <aside className="estimate" aria-label="Your estimate">
+              <span className="eyebrow">YOUR NEXT CHAPTER</span>
+              <h3>
+                Make it
+                <br />
+                your own.
+              </h3>
+              <div aria-live="polite" aria-atomic="true">
+                <div className="estimate-line">
+                  <span>Project {estimated ? "from" : "estimate"}</span>
+                  <strong>{money(total)}</strong>
+                </div>
+                <div className="estimate-line">
+                  <span>Ongoing care</span>
+                  <strong>
+                    {money(monthly)}
+                    <small>/mo</small>
+                  </strong>
+                </div>
+                <div className="first-year">
+                  <span>Project + 12 months of care</span>
+                  <b>
+                    {estimated ? "From " : ""}
+                    {money(total + 12 * monthly)}
+                  </b>
+                </div>
+              </div>
+              <p>
+                {estimated
+                  ? "Includes starting-price items. Final scope and cost require review."
+                  : "A planning estimate, confirmed in a written proposal before work begins."}{" "}
+                External services and applicable taxes are extra.
+              </p>
+              <a className="button dark" href="#contact">
+                Let’s talk about it ↗
+              </a>
+              <button
+                className="reset"
+                onClick={() => {
+                  setPkg("launch");
+                  setSelected([]);
+                  setCare(0);
+                }}
+              >
+                Reset selections
+              </button>
+              <span className="estimate-note">
+                No checkout. No commitment.
+                <br />
+                Just a useful place to start.
+              </span>
+            </aside>
+          </div>
+        </section>
+        <section id="about" className="section about">
+          <div>
+            <span className="eyebrow">04 / THE STUDIO</span>
+            <h2>
+              Built on curiosity.
+              <br />
+              <em>Growing by connection.</em>
+            </h2>
+          </div>
+          <div>
+            <p className="big-copy">
+              The best projects often start with someone saying, “I know a person.”
+            </p>
+            <p>
+              Virtual Candy Studio brings together the websites, creative work and practical systems
+              that have grown through those conversations. An independent studio with a personal
+              approach: understand the business, find the useful idea, and build it with care.
+            </p>
+            <p>
+              The name carries family history and a spirit of imagination. We’re keeping both—and
+              putting them to work.
+            </p>
+          </div>
+        </section>
+        <section className="section faq" id="faq">
+          <div>
+            <span className="eyebrow">05 / A FEW GOOD QUESTIONS</span>
+            <h2>
+              Let’s clear
+              <br />
+              <span>things up.</span>
+            </h2>
+          </div>
+          <div>
+            {faqs.map(([q, a]) => (
+              <details key={q}>
+                <summary>
+                  {q}
+                  <span>+</span>
+                </summary>
+                <p>{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+        <section id="contact" className="section contact">
+          <div>
+            <span className="eyebrow">06 / YOUR TURN</span>
+            <h2>
+              What are
+              <br />
+              you <em>making?</em>
+            </h2>
+            <p>
+              A new beginning, a better website, a process that could be simpler. Tell us what’s on
+              your mind.
+            </p>
+            <span className="preview-note">
+              LET’S START A CONVERSATION
+              <br />
+              <a href="mailto:info@virtualcandy.com">info@virtualcandy.com ↗</a>
+            </span>
+          </div>
+          <noscript>
+            <p>
+              The interactive estimate and brief builder require JavaScript. You can read the
+              services and prices here and email info@virtualcandy.com directly for an estimate.
+            </p>
+          </noscript>
+          <form onSubmit={downloadBrief}>
+            <fieldset className="inquiry-fields" disabled={!interactive}>
+              <legend className="sr-only">Project inquiry</legend>
+              <div className="form-row">
+                <label>
+                  Your name (required)
+                  <input name="name" autoComplete="name" required maxLength={100} />
+                </label>
+                <label>
+                  Email address (required)
+                  <input type="email" name="email" autoComplete="email" required maxLength={200} />
+                </label>
+              </div>
+              <label>
+                Business or project
+                <input name="business" autoComplete="organization" maxLength={200} />
+              </label>
+              <label>
+                What would you like to make happen? (required)
+                <textarea name="message" rows={4} required maxLength={4000} />
+              </label>
+              <div className="brief-summary">
+                Your selection: {pkg === "launch" ? "Launch" : "Business"} ·{" "}
+                {estimated ? "from " : ""}
+                {money(total)} + {money(monthly)}/month <a href="#pricing">Edit</a>
+              </div>
+              <p className="privacy">
+                Your details stay in this page until you open an email draft or download your brief.
+                Nothing is sent automatically. No payment information is collected. Please leave out
+                passwords and sensitive personal records. See our{" "}
+                <Link href="/privacy">privacy notice</Link>.
+              </p>
+              <button type="submit" name="action" value="email" className="button lime">
+                Prepare my inquiry email ↗
+              </button>
+              <button type="submit" name="action" value="download" className="download-brief">
+                Download brief instead ↓
+              </button>
+              <p role="status">{notice}</p>
+            </fieldset>
+          </form>
+        </section>
+      </main>
+      <footer>
+        <a className="brand" href="#">
+          <span className="mark">
+            vc<span>✳</span>
+          </span>
+          <span>
+            virtual candy<small>STUDIO</small>
+          </span>
+        </a>
+        <p>Good ideas. Made useful.</p>
+        <div>
+          <a href="#faq">FAQs</a>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Service terms</Link>
+          <Link href="/accessibility">Accessibility</Link>
+          <span>© {new Date().getFullYear()} Virtual Candy Studio</span>
+        </div>
+      </footer>
+    </>
+  );
+}

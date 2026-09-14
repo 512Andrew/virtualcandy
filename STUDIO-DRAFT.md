@@ -42,3 +42,6 @@ Uses the existing Next.js package and npm lockfile. Static export is in out/. Ru
 - Added a single 650ms electric-green card highlight on hover/keyboard focus, disabled with reduced motion.
 - Static build and diff checks passed. Hosted checks confirmed transparent caption, matching 11px typography, single animation iteration, and no overflow at 797px/390px. Light and dark themes visually checked.
 - Draft: https://6aa78ba3dace99b073262387--melodious-squirrel-f66679.netlify.app
+
+## Launch preparation
+See LAUNCH.md for implemented search metadata, structured data, policies, accessibility improvements, dependency updates, verification and the production release procedure. Drafts remain noindex. Payments, mailbox receipt verification, production publishing and search-console setup remain separate launch steps.

@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { siteUrl, isPublicLaunch } from "@/lib/site";
 export const metadata: Metadata = {
-  title: "Virtual Candy Studio — Good ideas. Made useful.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Virtual Candy Studio | Websites, Content & Automation",
+    template: "%s | Virtual Candy Studio",
+  },
   description:
     "Websites, content and practical automation for independent professionals and growing businesses. Explore services and build your project estimate.",
-  robots: { index: false, follow: false },
+  robots: { index: isPublicLaunch, follow: isPublicLaunch },
+  twitter: { card: "summary_large_image" },
   icons: { icon: "/studio-icon.svg" },
   openGraph: {
     title: "Virtual Candy Studio",
     description: "Distinctive websites. Clearer stories. Systems that save you time.",
     type: "website",
+    siteName: "Virtual Candy Studio",
+    locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Virtual Candy Studio — Good ideas. Made useful.",
+      },
+    ],
   },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -22,7 +38,25 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": `${siteUrl}/#studio`,
+              name: "Virtual Candy Studio",
+              url: siteUrl,
+              email: "info@virtualcandy.com",
+              logo: `${siteUrl}/studio-icon.svg`,
+              description:
+                "An independent digital studio creating websites, content and practical automation for independent professionals and growing businesses.",
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
