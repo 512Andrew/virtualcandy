@@ -1,6 +1,6 @@
 # Virtual Candy Studio launch candidate
 
-The Candyverse archive and production deployment remain intact. This branch prepares the Studio; it has not switched the public domain.
+Virtual Candy Studio was published September 16, 2026. The original Candyverse remains available through its archived deployment and repository archives.
 
 ## Included
 
@@ -41,3 +41,13 @@ The form prepares email and downloadable briefs; it is not direct server-side fo
 - Hosted routes, PNG share image MIME type and security headers verified.
 - Browser: mobile menu at 390px, no horizontal overflow, policy navigation, dark skip-link contrast, form enablement after hydration, and estimate regression ($1,650 project + $129/month = $3,198 first year) checked. No complete assistive-technology certification is implied.
 - Final launch-candidate preview: https://6aa79015f0b721deea316af9--melodious-squirrel-f66679.netlify.app
+
+## September 16, 2026 production release
+
+- Owner confirmed info@virtualcandy.com receives email.
+- Published commit eaab94d as production deploy 6aab1c300777c96a91702bfa.
+- Live: https://www.virtualcandy.com
+- Found GoDaddy-authoritative DNS still parked. Updated only A @ from Parked to 75.2.60.5 and CNAME www from virtualcandy.com to melodious-squirrel-f66679.netlify.app. Nameservers and Google Workspace MX/SPF/DKIM records preserved.
+- Added virtualcandy.com as a Netlify domain alias. Renewed the expired managed TLS certificate for apex and www; issued certificate expires December 15, 2026.
+- Verified public www HTTPS, all four page routes, index/follow metadata, robots allow rule, sitemap, PNG share image and enabled inquiry form. Apex routing at Netlify redirects to www; recursive caches may temporarily retain the previous parking records.
+- Search-console registration/submission and payment collection remain pending.
