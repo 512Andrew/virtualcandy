@@ -11,18 +11,19 @@ export default function Privacy() {
     <main id="main" className="legal-page">
       <Link href="/">← Back to the studio</Link>
       <h1>Privacy notice</h1>
-      <p>Updated September 14, 2026</p>
+      <p>Updated September 20, 2026</p>
       <p>
         This notice describes the Virtual Candy Studio website. Contact{" "}
         <a href="mailto:info@virtualcandy.com">info@virtualcandy.com</a> with privacy questions.
       </p>
       <h2>Your project inquiry</h2>
       <p>
-        The estimate builder works in your browser. Entered inquiry details are not submitted to a
-        studio server by this form. “Prepare my inquiry email” passes your name, email address,
-        business, message and estimate to your email application. You review and send that email
-        yourself. “Download brief” creates a text file on your device; you decide whether to share
-        it.
+        The estimate builder works in your browser. When you select “Send my inquiry,” your name,
+        email address, business or project, message and estimate are sent to Netlify Forms, stored
+        in the studio’s Netlify account and included in an email notification to
+        info@virtualcandy.com. Netlify also processes technical submission data for spam prevention
+        and service operation. “Download brief” creates a text file on your device without
+        submitting the inquiry.
       </p>
       <p>
         When you email us, the studio and the email providers involved receive your message and
@@ -48,15 +49,15 @@ export default function Privacy() {
       <p>
         You can browse without making an inquiry, clear the stored theme preference through your
         browser settings, or contact us to request access, correction or deletion of information you
-        have emailed. We may need to verify the request and retain records where required for an
-        active project, accounting, legal obligations or dispute resolution. Applicable privacy
-        rights depend on your location and circumstances.
+        have submitted or emailed. We may need to verify the request and retain records where
+        required for an active project, accounting, legal obligations or dispute resolution.
+        Applicable privacy rights depend on your location and circumstances.
       </p>
       <h2>External websites and updates</h2>
       <p>
         Client examples link to independently operated websites with their own privacy practices.
         This notice will be updated when the site’s data handling changes, including any future
-        payment or direct form service.
+        payment service.
       </p>
       <nav aria-label="Policies">
         <Link href="/terms">Service terms</Link>

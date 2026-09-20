@@ -18,3 +18,12 @@ const image = fs.readFileSync('out/opengraph-image');
 assert.equal(image.subarray(1,4).toString(), 'PNG', 'Social image is PNG');
 assert.ok(fs.readFileSync('out/_headers','utf8').includes('Content-Type: image/png'));
 console.log(`Verified ${live ? 'production' : 'preview'} export: metadata, headings, structured data, inquiry fallback, client links, social image and headers.`);
+
+const skeleton = fs.readFileSync('out/__forms.html', 'utf8');
+for (const field of ['form-name', 'name', 'email', 'business', 'message', 'brief', 'bot-field']) {
+  assert.ok(skeleton.includes(`name="${field}"`), `Netlify registration includes ${field}`);
+  assert.ok(home.includes(`name="${field}"`), `Visible form includes ${field}`);
+}
+assert.ok(skeleton.includes('name="studio-inquiry"'));
+assert.ok(skeleton.includes('netlify-honeypot="bot-field"'));
+console.log('Netlify form registration and submission fields match.');

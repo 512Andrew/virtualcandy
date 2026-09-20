@@ -1,5 +1,5 @@
 "use client";
-import { useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import ThemePicker from "./ThemePicker";
 
@@ -86,6 +86,8 @@ export default function Home() {
     () => true,
     () => false
   );
+  const sendingRef = useRef(false);
+  const [sending, setSending] = useState(false);
   const [menu, setMenu] = useState(false),
     [pkg, setPkg] = useState("launch"),
     [selected, setSelected] = useState<number[]>([]),
@@ -96,22 +98,42 @@ export default function Home() {
     monthly = plans[care].price,
     estimated = selected.some((i) => extras[i].quote);
   const summary = `Virtual Candy Studio project brief\nPackage: ${pkg === "launch" ? "Launch" : "Business"}\nOptions: ${selected.map((i) => extras[i].name).join(", ") || "None"}\nProject ${estimated ? "starting estimate" : "estimate"}: ${money(total)}\nCare: ${plans[care].name} (${money(monthly)}/month)\nFirst year studio fees: ${money(total + monthly * 12)}\nExternal fees and taxes excluded. Scope subject to written confirmation.`;
-  function downloadBrief(e: React.FormEvent<HTMLFormElement>) {
+  async function handleInquiry(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const text =
       summary +
       `\n\nName: ${data.get("name")}\nEmail: ${data.get("email")}\nBusiness: ${data.get("business")}\nGoal: ${data.get("message")}\n`;
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
-    if (submitter?.value === "email") {
-      window.location.href =
-        "mailto:info@virtualcandy.com?subject=" +
-        encodeURIComponent("Project inquiry — Virtual Candy Studio") +
-        "&body=" +
-        encodeURIComponent(text);
-      setNotice(
-        "Your email app will open with your brief. Review it and press Send there. If no email app opens, download the brief and email it to info@virtualcandy.com."
-      );
+    if (submitter?.value !== "download") {
+      if (sendingRef.current) return;
+      sendingRef.current = true;
+      const form = e.currentTarget;
+      const payload = new URLSearchParams();
+      data.forEach((value, key) => payload.set(key, String(value)));
+      payload.set("brief", summary);
+      setSending(true);
+      setNotice("Sending your inquiry…");
+      try {
+        const response = await fetch("/__forms.html", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: payload.toString(),
+          signal: AbortSignal.timeout(20000),
+        });
+        if (!response.ok) throw new Error("Submission failed");
+        form.reset();
+        setNotice(
+          "Thank you—your inquiry has been received. We’ll reply to the email address you provided."
+        );
+      } catch {
+        setNotice(
+          "We couldn’t confirm your submission. Your details are still here. Please try again or download your brief and email info@virtualcandy.com. If you already received a reply, there’s no need to resend."
+        );
+      } finally {
+        sendingRef.current = false;
+        setSending(false);
+      }
       return;
     }
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
@@ -556,8 +578,24 @@ export default function Home() {
               services and prices here and email info@virtualcandy.com directly for an estimate.
             </p>
           </noscript>
-          <form onSubmit={downloadBrief}>
-            <fieldset className="inquiry-fields" disabled={!interactive}>
+          <form
+            name="studio-inquiry"
+            method="POST"
+            action="/__forms.html"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            onSubmit={handleInquiry}
+            aria-busy={sending}
+          >
+            <input type="hidden" name="form-name" value="studio-inquiry" />
+            <input type="hidden" name="brief" value={summary} />
+            <p hidden>
+              <label>
+                Leave this empty
+                <input name="bot-field" tabIndex={-1} autoComplete="off" />
+              </label>
+            </p>
+            <fieldset className="inquiry-fields" disabled={!interactive || sending}>
               <legend className="sr-only">Project inquiry</legend>
               <div className="form-row">
                 <label>
@@ -583,13 +621,13 @@ export default function Home() {
                 {money(total)} + {money(monthly)}/month <a href="#pricing">Edit</a>
               </div>
               <p className="privacy">
-                Your details stay in this page until you open an email draft or download your brief.
-                Nothing is sent automatically. No payment information is collected. Please leave out
-                passwords and sensitive personal records. See our{" "}
+                Sending this form shares your contact details, message and estimate with Virtual
+                Candy Studio through Netlify Forms. No payment information is collected. Please
+                leave out passwords and sensitive personal records. See our{" "}
                 <Link href="/privacy">privacy notice</Link>.
               </p>
-              <button type="submit" name="action" value="email" className="button lime">
-                Prepare my inquiry email ↗
+              <button type="submit" name="action" value="send" className="button lime">
+                {sending ? "Sending…" : "Send my inquiry ↗"}
               </button>
               <button type="submit" name="action" value="download" className="download-brief">
                 Download brief instead ↓

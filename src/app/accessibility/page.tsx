@@ -10,7 +10,7 @@ export default function Accessibility() {
     <main id="main" className="legal-page">
       <Link href="/">← Back to the studio</Link>
       <h1>Accessibility</h1>
-      <p>Updated September 14, 2026</p>
+      <p>Updated September 20, 2026</p>
       <p>
         We aim to make Virtual Candy Studio usable with keyboards, assistive technology and a range
         of screen sizes, using WCAG 2.2 Level AA as our design target. This is an ongoing effort,
@@ -31,9 +31,9 @@ export default function Accessibility() {
         discuss services and prepare an estimate by email.
       </p>
       <p>
-        The inquiry button opens your email application; a downloadable brief is available if that
-        does not work on your device. External client websites are maintained separately and may
-        have different accessibility features.
+        The inquiry form sends your message directly through Netlify Forms. A downloadable brief and
+        a direct email link are available if submission does not work on your device. External
+        client websites are maintained separately and may have different accessibility features.
       </p>
       <nav aria-label="Policies">
         <Link href="/privacy">Privacy</Link>

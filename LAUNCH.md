@@ -25,7 +25,7 @@ For a draft: `npm run build`, `node scripts/verify-export.mjs`, then `npx netlif
 
 ## Product and policy boundaries
 
-The form prepares email and downloadable briefs; it is not direct server-side form delivery. Payments and subscription enrollment remain deferred. The policy text reflects this implementation and uses the Studio name without inventing a legal entity, address or registration. A written project agreement must identify the contracting party and cover refunds, cancellations, ownership and any recurring billing before those transactions begin. No claim of legal certification or complete WCAG conformance is made.
+The form now submits directly through Netlify Forms and retains a downloadable brief fallback. Payments and subscription enrollment remain deferred. The policy text reflects this implementation and uses the Studio name without inventing a legal entity, address or registration. A written project agreement must identify the contracting party and cover refunds, cancellations, ownership and any recurring billing before those transactions begin. No claim of legal certification or complete WCAG conformance is made.
 
 ## Guidance consulted
 
@@ -51,3 +51,12 @@ The form prepares email and downloadable briefs; it is not direct server-side fo
 - Added virtualcandy.com as a Netlify domain alias. Renewed the expired managed TLS certificate for apex and www; issued certificate expires December 15, 2026.
 - Verified public www HTTPS, all four page routes, index/follow metadata, robots allow rule, sitemap, PNG share image and enabled inquiry form. Apex routing at Netlify redirects to www; recursive caches may temporarily retain the previous parking records.
 - Search-console registration/submission and payment collection remain pending.
+
+## September 20, 2026 — direct inquiry delivery
+
+- Enabled Netlify HTML form detection (processing_settings.ignore_html_forms=false).
+- Registered studio-inquiry, form ID 6ab047828849770008a5c9bd, with a hidden honeypot and all contact/estimate fields. Static detection file: public/__forms.html.
+- Email submission notification ID 6ab047886013221640830aae targets info@virtualcandy.com; subject: New Virtual Candy Studio inquiry.
+- Browser test VC-NF-20260920 returned success and was verified in Netlify's accepted submissions, including Business + booking + Care totals of $1,650, $129/month and $3,198 first year. Submission ID 6ab047a4d180bf1acda73b50 retained as a clearly labeled test. Inbox receipt has not been independently confirmed.
+- Updated public privacy/accessibility wording, preserved local-download fallback and added pending/error handling. Production deploy: 6ab047c2b83e9e68d69c7c01.
+- Build, TypeScript, targeted ESLint, export verification and live form appearance passed.
